@@ -26,7 +26,7 @@ const CreatePost = () => {
   }
 
   const handleSurpriseMe = () => {
-    
+
   }
   
   return (
@@ -39,7 +39,7 @@ const CreatePost = () => {
       <form className="mt-16 max-w-3xl" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-5">
           <FormField 
-            labelName="Your Name"
+            labelName="Seu nome"
             type="text"
             name="name"
             placeHolder="Seu Nome"
@@ -47,10 +47,10 @@ const CreatePost = () => {
             handleChange={handleChange}
             />
             <FormField 
-            labelName="Prompt"
+            labelName="Descrever"
             type="text"
             name="prompt"
-            placeHolder="A plush toy robot sitting against a yellow wall"
+            placeHolder="Um robô de brinquedo de pelúcia sentado contra uma parede amarela"
             value={form.prompt}
             handleChange={handleChange}
             isSurpriseMe
