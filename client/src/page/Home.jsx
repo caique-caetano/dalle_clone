@@ -26,7 +26,7 @@ const Home = () => {
     <section className="max-w-7x1 mx-auto">
       <div className="">
         <h1 className="font-extrabold text-[#222328] text-[32px]">Vitrine da Comunidade</h1>
-        <p className="mt-2 text-[#666e75] text-[16px] max-w-[500px]">Navegue através de uma coleção de imagens imaginativas e visualmente impressionantes geradas epla DALL-E AI</p>
+        <p className="mt-2 text-[#666e75] text-[16px] max-w-[500px]">Navegue através de uma coleção de imagens imaginativas e visualmente impressionantes geradas pela DALL-E AI</p>
       </div>
 
       <div className="mt-16">
