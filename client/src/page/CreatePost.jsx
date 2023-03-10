@@ -1,23 +1,31 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { preview } from '../assets';
 import { getRandomPrompt } from '../utils';
-import { FormField, Loader} from '../components';
+import { FormField, Loader } from '../components';
 
 const CreatePost = () => {
   const navigate = useNavigate();
+
   const [form, setForm] = useState({
-    name:'',
-    prompt:'',
-    photo:','
+    name: '',
+    prompt: '',
+    photo: '',
   });
 
   const [generatingImg, setGeneratingImg] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleSurpriseMe = () => {
+    const randomPrompt = getRandomPrompt(form.prompt);
+    setForm({ ...form, prompt: randomPrompt });
+  };
+
   const generateImage = async () => {
-    if(form.prompt) {
+    if (form.prompt) {
       try {
         setGeneratingImg(true);
         const response = await fetch('http://localhost:8080/api/v1/dalle', {
@@ -25,23 +33,22 @@ const CreatePost = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ prompt: form.prompt }),
-        })
+          body: JSON.stringify({
+            prompt: form.prompt,
+          }),
+        });
 
         const data = await response.json();
-
-        setForm({...form, photo: `data:image/jpeg;base64,${data.photo}`})
-      } catch (error) {
-        alert(error);
+        setForm({ ...form, photo: `data:image/jpeg;base64,${data.photo}` });
+      } catch (err) {
+        alert(err);
       } finally {
         setGeneratingImg(false);
       }
-
     } else {
-      alert('Please enter a prompt');
+      alert('Please provide proper prompt');
     }
-
-  }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,11 +61,11 @@ const CreatePost = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(form),
+          body: JSON.stringify({ ...form }),
         });
 
         await response.json();
-        alert('Processo Encerrado');
+        alert('Success');
         navigate('/');
       } catch (err) {
         alert(err);
@@ -66,52 +73,40 @@ const CreatePost = () => {
         setLoading(false);
       }
     } else {
-      alert('Por favor descreve a imagem a ser gerada');
+      alert('Please generate an image with proper details');
     }
   };
 
-
-  const handleChange = (e) => {
-    setForm({...form, [e.target.name]: e.target.value })
-
-
-  }
-
-  const handleSurpriseMe = () => {
-    const randomPrompt = getRandomPrompt(form.prompt);
-    setForm({...form, prompt: randomPrompt })
-  }
-  
   return (
     <section className="max-w-7xl mx-auto">
-      <div className="">
-        <h1 className="font-extrabold text-[#222328] text-[32px]">Crie</h1>
-        <p className="mt-2 text-[#666e75] text-[16px] max-w-[500px]">Crie uma coleção de imagens imaginativas e visualmente impressionantes através da DALL-E AI e compartilhe com a comunidade.</p>
+      <div>
+        <h1 className="font-extrabold text-[#222328] text-[32px]">Gerar</h1>
+        <p className="mt-2 text-[#666e75] text-[14px] max-w-[500px]">Gere uma imagem criativa por meio do DALL-E AI e compartilhe com a comunidade.</p>
       </div>
 
       <form className="mt-16 max-w-3xl" onSubmit={handleSubmit}>
-        <div className="flex flex-col gap-5 mb-3">
-          <FormField 
-            labelName="Seu nome"
+        <div className="flex flex-col gap-5">
+          <FormField
+            labelName="Nome"
             type="text"
             name="name"
-            placeHolder="Seu Nome"
+            placeHolder="Exemplo: Caique"
             value={form.name}
             handleChange={handleChange}
-            />
-            <FormField 
-            labelName="Descrever"
+          />
+
+          <FormField
+            labelName="Descrição da Imagem"
             type="text"
             name="prompt"
-            placeHolder="Um robô de brinquedo de pelúcia sentado contra uma parede amarela"
+            placeHolder="An Impressionist oil painting of sunflowers in a purple vase…"
             value={form.prompt}
             handleChange={handleChange}
             isSurpriseMe
             handleSurpriseMe={handleSurpriseMe}
-            />
-        </div>
+          />
 
-        <div className="relative bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-64 p-3 h-64 flex justify-center items-center">
+          <div className="relative bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-64 p-3 h-64 flex justify-center items-center">
             { form.photo ? (
               <img
                 src={form.photo}
@@ -132,6 +127,7 @@ const CreatePost = () => {
               </div>
             )}
           </div>
+        </div>
 
         <div className="mt-5 flex gap-5">
           <button
@@ -142,18 +138,19 @@ const CreatePost = () => {
             {generatingImg ? 'Gerando...' : 'Gerar'}
           </button>
         </div>
-            
+
         <div className="mt-10">
-          <p className="mt-2 text-[#666e75] text-[14px]">**Depois de criar a imagem desejada, você pode compartilhá-la com outras pessoas da comunidade**</p>
-          <button 
+          <p className="mt-2 text-[#666e75] text-[14px]">** Depois de criar a imagem desejada, você pode compartilhá-la com outras pessoas da comunidade **</p>
+          <button
             type="submit"
-            className="mt-3 text-white bg-[#6469ff] font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center">
-              {loading ? 'Compartilhando...' : 'Compartilhar com a Comunidade'}
+            className="mt-3 text-white bg-[#6469ff] font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+          >
+            {loading ? 'Compartilhando...' : 'Compartilhar com a comunidade' }
           </button>
-        </div>      
+        </div>
       </form>
     </section>
-  )
-}
+  );
+};
 
-export default CreatePost
+export default CreatePost;
